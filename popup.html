@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SN Utils GitHub Sync</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1>SN Utils GitHub Sync</h1>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="home">Home</button>
+      <button class="tab" data-tab="settings">Settings</button>
+      <button class="tab" data-tab="about">About</button>
+    </nav>
+
+    <main class="content">
+      <!-- Home Tab -->
+      <section id="tab-home" class="tab-panel active">
+        <h2>Purpose</h2>
+        <p>
+          This extension automatically merges your custom slash commands
+          into <code>window.top.snuslashcommands</code> on every
+          ServiceNow page load.
+        </p>
+        <p>
+          Commands can be entered manually or synced from a public GitHub
+          file (fetched once per day). Configure the source in
+          <strong>Settings</strong>.
+        </p>
+      </section>
+
+      <!-- Settings Tab -->
+      <section id="tab-settings" class="tab-panel">
+        <h2>Settings</h2>
+
+        <!-- Source selector -->
+        <div class="card">
+          <span class="label">Source</span>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="syncMode" value="manual" checked />
+              Manual
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="syncMode" value="github" />
+              GitHub
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="syncMode" value="url" />
+              Custom URL
+            </label>
+          </div>
+        </div>
+
+        <!-- Manual panel -->
+        <div class="card source-panel" id="panel-manual">
+          <label class="label" for="commands-json">Slash Commands (JSON)</label>
+          <p class="help-text">
+            Keys are command names (without <code>/</code>), values contain
+            <code>url</code>, <code>hint</code>, <code>fields</code>,
+            <code>order</code>, <code>overwriteurl</code>.
+          </p>
+          <textarea
+            id="commands-json"
+            class="textarea"
+            rows="10"
+            spellcheck="false"
+            placeholder='{ "test": { "url": "...", "hint": "..." } }'
+          ></textarea>
+          <div class="btn-row">
+            <button id="btn-save-manual" class="btn btn-primary">Save</button>
+            <button id="btn-format" class="btn btn-secondary">Format</button>
+          </div>
+        </div>
+
+        <!-- GitHub panel -->
+        <div class="card source-panel hidden" id="panel-github">
+          <label class="label" for="gh-repo">Repository</label>
+          <input id="gh-repo" type="text" class="input" placeholder="owner/repo" spellcheck="false" />
+
+          <label class="label" for="gh-path">File path</label>
+          <input id="gh-path" type="text" class="input" placeholder="slashcommands.json" spellcheck="false" />
+
+          <label class="label" for="gh-branch">Branch</label>
+          <input id="gh-branch" type="text" class="input" placeholder="main" spellcheck="false" />
+
+          <div class="btn-row">
+            <button id="btn-save-github" class="btn btn-primary">Save</button>
+            <button id="btn-sync-github" class="btn btn-secondary">Sync now</button>
+          </div>
+          <div id="gh-sync-info" class="sync-info"></div>
+        </div>
+
+        <!-- Custom URL panel -->
+        <div class="card source-panel hidden" id="panel-url">
+          <label class="label" for="custom-url">URL</label>
+          <p class="help-text">
+            Must return a JSON object. No authentication. For advanced
+            users &mdash; no guarantee of compatibility.
+          </p>
+          <input id="custom-url" type="text" class="input" placeholder="https://example.com/commands.json" spellcheck="false" />
+
+          <div class="btn-row">
+            <button id="btn-save-url" class="btn btn-primary">Save</button>
+            <button id="btn-sync-url" class="btn btn-secondary">Sync now</button>
+          </div>
+          <div id="url-sync-info" class="sync-info"></div>
+        </div>
+
+        <div id="settings-status" class="status hidden"></div>
+      </section>
+
+      <!-- About Tab -->
+      <section id="tab-about" class="tab-panel">
+        <h2>About</h2>
+        <div class="card">
+          <dl class="info-list">
+            <dt>Extension</dt>
+            <dd>SN Utils GitHub Sync</dd>
+            <dt>Version</dt>
+            <dd id="version">&mdash;</dd>
+            <dt>Compatibility</dt>
+            <dd>Chrome &middot; Edge &middot; Firefox</dd>
+            <dt>License</dt>
+            <dd>MIT</dd>
+          </dl>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
